@@ -22,27 +22,30 @@ def parseJoker():
 
 def renamePointers():
 #rename pointer addresses to their respective pointed name
-    start = SegStart(ScreenEA())
-    end = SegEnd(ScreenEA())
-    xrfs = []
+	start = SegStart(ScreenEA())
+	end = SegEnd(ScreenEA())
+	xrfs = []
 
-    for ea in Heads(start,end):
-        if DfirstB(ea) != BADADDR:
-            xrfs.append(ea)
+	for ea in Heads(start,end):
+    		if DfirstB(ea) != BADADDR:
+       			xrfs.append(ea)
 
-    for i in range(len(xrfs)-1):
-        sname = Name(xrfs[i])
-        pname = Name(Qword(xrfs[i]))
+	for i in range(len(xrfs)-1):
+		sname = Name(xrfs[i])
+		pname = Name(Qword(xrfs[i]))
 
-        if sname[:4] == "off_":
-            if pname[4] != "off_":
-                newName = Demangle(pname, GetLongPrm(INF_SHORT_DN))
-                if newName != None:
-                    newName = "p"+ newName.replace("::",".").split("(")[0]
-                else:
-                    newName = "p"+pname
-                ida_name.do_name_anyway(xrfs[i], newName)
-                print newName
+    	if sname[:4] == "off_":
+        	if pname[:4] != "sub_" and pname[:4] != "off_":
+			#Ignore generic naming
+            		newName = Demangle(pname, GetLongPrm(INF_SHORT_DN))
+            	
+		if newName != None: 
+			#Successfully Demangled
+                	newName = "p"+ newName.replace("::",".").split("(")[0]
+            	else:
+                	newName = "p"+pname
+            	ida_name.do_name_anyway(xrfs[i], newName)
+            	print newName
                 
 def fixDataRefs():
 	### Find all data refs, and make data at the offsets
