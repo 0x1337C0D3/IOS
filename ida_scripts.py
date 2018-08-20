@@ -18,37 +18,37 @@ def parseJoker():
         if isCode(GetFlags(i)) and GetFunctionAttr(i, FUNCATTR_START) == BADADDR:
             MakeFunction(i)
             print "New Function: %16x" % i
+    return 0
 
 
 def renamePointers():
 	#rename pointer addresses to their respective pointed name
-		start = SegStart(ScreenEA())
-		end = SegEnd(ScreenEA())
-		xrfs = []
+	start = SegStart(ScreenEA())
+	end = SegEnd(ScreenEA())
+	xrfs = []
 	
-		for ea in Heads(start,end):
-			if DfirstB(ea) != BADADDR:
-	        		xrfs.append(ea)
+	for ea in Heads(start,end):
+	    if DfirstB(ea) != BADADDR:
+	        xrfs.append(ea)
 	
 	for i in range(len(xrfs)-1):
-	    	sname = Name(xrfs[i])
-	    	pname = Name(Qword(xrfs[i]))
-	    
-	    	ignore = ("qword","off_","word","byte","sub_", "dwor")
-	    
-	    	if pname == '':
-	        	continue
+	    sname = Name(xrfs[i])
+	    pname = Name(Qword(xrfs[i]))
 	
-	    	elif pname[:4] not in ignore:
-	    
-	        	newName = Demangle(pname, GetLongPrm(INF_SHORT_DN))
-		
-	        	if newName != None:
-	            		newName = "p"+ newName.replace("::",".").split("(")[0]
-	        	else:
-	            		newName = "p"+pname
-	        	ida_name.do_name_anyway(xrfs[i], newName)
-	        	print newName
+	    ignore = ("qwor","off_","word","byte","sub_", "dwor")
+		    
+	    if pname == '':
+	        continue
+	    elif pname[:4] not in ignore:
+	        newName = Demangle(pname, GetLongPrm(INF_SHORT_DN))
+	        
+	        if newName != None:
+	            newName = "p"+ newName.replace("::",".").split("(")[0]
+	        else:
+	            newName = "p"+pname
+	        ida_name.do_name_anyway(xrfs[i], newName)
+	        print newName
+	return 0
                 
 def fixDataRefs():
 	### Find all data refs, and make data at the offsets
@@ -83,4 +83,6 @@ def fixDataRefs():
 	    elif remainder == 8:
 	        MakeQword(mark)
 	    
-	    AnalyzeArea(xrfs[i],next)                
+	    AnalyzeArea(xrfs[i],next)
+		
+	return 0
